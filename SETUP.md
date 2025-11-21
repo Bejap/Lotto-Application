@@ -19,18 +19,17 @@ This guide provides comprehensive instructions for setting up the Lotto Applicat
 Before setting up the Lotto Application, ensure you have the following installed on your system:
 
 - **Git** (version 2.x or higher)
-- **Programming Language Runtime** (to be specified based on implementation choice):
-  - Python 3.8+ (recommended for data analysis capabilities)
-  - Node.js 16+ and npm/yarn (for web-based implementation)
-  - Java 11+ (for enterprise-grade implementation)
+- **.NET SDK** (version 6.0 or higher)
+  - Download from [https://dotnet.microsoft.com/download](https://dotnet.microsoft.com/download)
+  - Verify installation: `dotnet --version`
 - **Database** (optional, for data persistence):
+  - SQL Server Express (recommended for Windows)
   - SQLite (lightweight, recommended for development)
-  - PostgreSQL 12+ (recommended for production)
-  - MySQL 8+ (alternative option)
+  - PostgreSQL 12+ (cross-platform option)
 - **Code Editor/IDE** (recommended):
-  - Visual Studio Code
-  - PyCharm (for Python implementation)
-  - IntelliJ IDEA (for Java implementation)
+  - Visual Studio 2022 (Community, Professional, or Enterprise)
+  - Visual Studio Code with C# extension
+  - JetBrains Rider
 
 ## Installation
 
@@ -41,283 +40,380 @@ git clone https://github.com/Bejap/Lotto-Application.git
 cd Lotto-Application
 ```
 
-### 2. Install Dependencies
-
-#### For Python Implementation:
+### 2. Restore Dependencies
 
 ```bash
-# Create a virtual environment
-python -m venv venv
+# Restore NuGet packages
+dotnet restore
 
-# Activate the virtual environment
-# On Windows:
-venv\Scripts\activate
-# On macOS/Linux:
-source venv/bin/activate
-
-# Install required packages
-pip install -r requirements.txt
+# Or if using Visual Studio, it will restore automatically when you open the solution
 ```
 
-#### For Node.js Implementation:
+### 3. Build the Solution
 
 ```bash
-# Install dependencies
-npm install
-# or
-yarn install
-```
+# Build in Debug mode
+dotnet build
 
-#### For Java Implementation:
-
-```bash
-# Using Maven
-mvn clean install
-
-# Using Gradle
-gradle build
+# Build in Release mode
+dotnet build --configuration Release
 ```
 
 ## Configuration
 
-### Environment Variables
+### appsettings.json
 
-Create a `.env` file in the root directory with the following variables:
+Create or modify `appsettings.json` for application-specific settings:
 
-```env
-# Application Settings
-APP_ENV=development
-DEBUG=true
-
-# Database Configuration
-DB_TYPE=sqlite
-DB_PATH=./data/lotto.db
-# For PostgreSQL/MySQL:
-# DB_HOST=localhost
-# DB_PORT=5432
-# DB_NAME=lotto_app
-# DB_USER=your_username
-# DB_PASSWORD=your_password
-
-# Lottery Configuration
-LOTTERY_TYPE=standard
-NUMBERS_COUNT=6
-NUMBER_RANGE_MIN=1
-NUMBER_RANGE_MAX=49
-
-# Data Source (for historical lottery data)
-# Replace with actual data source URL
-DATA_SOURCE_URL=https://api.example.com/lottery-data
-DATA_SOURCE_API_KEY=your_api_key_here
+```json
+{
+  "Logging": {
+    "LogLevel": {
+      "Default": "Information",
+      "Microsoft.AspNetCore": "Warning"
+    }
+  },
+  "AllowedHosts": "*",
+  "ConnectionStrings": {
+    "DefaultConnection": "Data Source=lotto.db",
+    "SqlServerConnection": "Server=(localdb)\\mssqllocaldb;Database=LottoApp;Trusted_Connection=True;MultipleActiveResultSets=true"
+  },
+  "LotterySettings": {
+    "Type": "standard",
+    "NumbersPerDraw": 6,
+    "NumberRangeMin": 1,
+    "NumberRangeMax": 49
+  },
+  "AnalysisSettings": {
+    "HistoricalDataLimit": 1000,
+    "HotNumberThreshold": 0.15,
+    "ColdNumberThreshold": 0.05
+  },
+  "GenerationSettings": {
+    "DefaultRows": 5,
+    "Algorithms": [
+      "FrequencyBased",
+      "PatternBased",
+      "RandomWeighted"
+    ]
+  },
+  "DataSource": {
+    "Url": "https://api.example.com/lottery-data",
+    "ApiKey": "your_api_key_here"
+  }
+}
 ```
 
-### Configuration File
+### appsettings.Development.json
 
-Create or modify `config.yaml` (or `config.json`) for application-specific settings:
+For development-specific settings:
 
-```yaml
-lottery:
-  type: "standard"
-  numbers_per_draw: 6
-  number_range:
-    min: 1
-    max: 49
+```json
+{
+  "Logging": {
+    "LogLevel": {
+      "Default": "Debug",
+      "System": "Information",
+      "Microsoft": "Information"
+    }
+  },
+  "ConnectionStrings": {
+    "DefaultConnection": "Data Source=lotto_dev.db"
+  }
+}
+```
 
-analysis:
-  historical_data_limit: 1000  # Number of past draws to analyze
-  hot_number_threshold: 0.15   # Frequency threshold for hot numbers
-  cold_number_threshold: 0.05  # Frequency threshold for cold numbers
+### User Secrets (for sensitive data)
 
-generation:
-  default_rows: 5              # Default number of rows to generate
-  algorithms:
-    - frequency_based
-    - pattern_based
-    - random_weighted
+For local development, use .NET User Secrets to store sensitive information:
+
+```bash
+# Initialize user secrets
+dotnet user-secrets init
+
+# Set API key
+dotnet user-secrets set "DataSource:ApiKey" "your_actual_api_key"
+
+# Set connection string
+dotnet user-secrets set "ConnectionStrings:SqlServerConnection" "your_connection_string"
 ```
 
 ## Development Environment
 
 ### Setting Up the Database
 
-#### SQLite (Development):
+#### Entity Framework Core Migrations
 
 ```bash
-# Database will be created automatically on first run
-# Or manually create the schema:
-sqlite3 data/lotto.db < schema.sql
+# Install EF Core tools (if not already installed)
+dotnet tool install --global dotnet-ef
+
+# Add initial migration
+dotnet ef migrations add InitialCreate
+
+# Update database
+dotnet ef database update
 ```
 
-#### PostgreSQL (Production):
+#### SQLite (Development):
+
+SQLite database will be created automatically when running migrations. Connection string example:
+
+```json
+"ConnectionStrings": {
+  "DefaultConnection": "Data Source=lotto.db"
+}
+```
+
+#### SQL Server (Production):
 
 ```bash
-# Create the database
-createdb lotto_app
+# Ensure SQL Server is running
+# Update connection string in appsettings.json
 
 # Run migrations
-# Python (using Alembic):
-alembic upgrade head
-
-# Node.js (using Knex/Sequelize):
-npm run migrate
-
-# Java (using Flyway):
-mvn flyway:migrate
+dotnet ef database update --connection "your_connection_string"
 ```
 
 ### Importing Historical Data
 
 ```bash
-# Download sample historical data (replace URL with actual data source)
-curl -o data/historical_draws.csv https://example.com/lottery-data.csv
+# Using a custom import command (if implemented)
+dotnet run -- import-data data/historical_draws.csv
 
-# Import the data
-# Python:
-python scripts/import_data.py data/historical_draws.csv
+# Or using a separate console application
+dotnet run --project ImportTool -- data/historical_draws.csv
+```
 
-# Node.js:
-npm run import-data data/historical_draws.csv
-
-# Java:
-java -jar import-tool.jar data/historical_draws.csv
+Example CSV format for historical draws:
+```csv
+DrawDate,Number1,Number2,Number3,Number4,Number5,Number6
+2024-01-01,5,12,23,34,41,49
+2024-01-08,3,15,27,33,38,45
 ```
 
 ## Running the Application
 
 ### Development Mode
 
+#### Console Application:
+
+```bash
+# Run the application
+dotnet run
+
+# Run with specific arguments
+dotnet run -- generate --rows 5
+
+# Run with watch (auto-reload on file changes)
+dotnet watch run
+```
+
+#### Web Application (ASP.NET Core):
+
+```bash
+# Run the web application
+dotnet run
+
+# Or with watch for development
+dotnet watch run
+
+# Specify a different port
+dotnet run --urls "http://localhost:5000;https://localhost:5001"
+```
+
+The application will be available at:
+- HTTP: `http://localhost:5000`
+- HTTPS: `https://localhost:5001`
+
+#### Using Visual Studio
+
+1. Open the solution file (`.sln`) in Visual Studio
+2. Press `F5` to run with debugging, or `Ctrl+F5` to run without debugging
+
+### Using the Application
+
 #### Command Line Interface:
 
 ```bash
-# Python
-python main.py
+# Generate lottery numbers
+dotnet run -- generate --rows 5
 
-# Node.js
-npm run dev
+# Analyze historical data
+dotnet run -- analyze --draws 100
 
-# Java
-mvn exec:java -Dexec.mainClass="com.lotto.Main"
+# Check number frequency
+dotnet run -- frequency --number 7
+
+# View hot and cold numbers
+dotnet run -- stats
 ```
 
 #### Web Interface (if implemented):
 
-```bash
-# Python (Flask/Django)
-flask run
-# or
-python manage.py runserver
-
-# Node.js (Express)
-npm start
-
-# Java (Spring Boot)
-mvn spring-boot:run
-```
-
-The application will be available at `http://localhost:8080` (or configured port).
-
-### Using the Application
-
-```bash
-# Generate lottery numbers
-./lotto generate --rows 5
-
-# Analyze historical data
-./lotto analyze --draws 100
-
-# Check number frequency
-./lotto frequency --number 7
-
-# View hot and cold numbers
-./lotto stats
-```
+Navigate to the web interface and use the UI to:
+- Generate lottery numbers
+- View historical analysis
+- Check number statistics
+- Track generated numbers
 
 ## Testing
 
 ### Running Tests
 
 ```bash
-# Python
-pytest tests/
-# With coverage:
-pytest --cov=src tests/
+# Run all tests
+dotnet test
 
-# Node.js
-npm test
-# With coverage:
-npm run test:coverage
+# Run tests with detailed output
+dotnet test --verbosity detailed
 
-# Java
-mvn test
-# With coverage:
-mvn test jacoco:report
+# Run tests with code coverage
+dotnet test --collect:"XPlat Code Coverage"
+
+# Run specific test project
+dotnet test tests/LottoApp.Tests/LottoApp.Tests.csproj
 ```
 
 ### Test Structure
 
 ```
 tests/
-├── unit/              # Unit tests for individual components
-├── integration/       # Integration tests for combined functionality
-├── data/             # Test data and fixtures
-└── fixtures/         # Reusable test fixtures
+├── LottoApp.Tests/              # Unit tests
+├── LottoApp.IntegrationTests/   # Integration tests
+└── LottoApp.TestData/           # Test data and fixtures
 ```
 
 ### Running Specific Tests
 
 ```bash
-# Python - specific test file
-pytest tests/unit/test_number_generator.py
+# Run tests by filter
+dotnet test --filter "FullyQualifiedName~NumberGenerator"
 
-# Node.js - specific test suite
-npm test -- --grep "NumberGenerator"
+# Run tests by category
+dotnet test --filter "Category=Unit"
 
-# Java - specific test class
-mvn test -Dtest=NumberGeneratorTest
+# Run a specific test method
+dotnet test --filter "FullyQualifiedName=LottoApp.Tests.NumberGeneratorTests.GenerateNumbers_ReturnsCorrectCount"
+```
+
+### Code Coverage Report
+
+```bash
+# Generate coverage report (requires ReportGenerator tool)
+dotnet test --collect:"XPlat Code Coverage"
+dotnet tool install -g dotnet-reportgenerator-globaltool
+reportgenerator -reports:"**/coverage.cobertura.xml" -targetdir:"coveragereport" -reporttypes:Html
+```
+
+### Watch Mode (for TDD)
+
+```bash
+# Run tests in watch mode
+dotnet watch test
 ```
 
 ## Building for Production
 
 ### Creating a Production Build
 
-#### Python:
+#### Publish the Application:
 
 ```bash
-# Create distribution package
-python setup.py sdist bdist_wheel
+# Publish for the current platform
+dotnet publish -c Release
 
-# Or using PyInstaller for standalone executable
-pyinstaller --onefile main.py
+# Publish for specific runtime (self-contained)
+dotnet publish -c Release -r win-x64 --self-contained
+dotnet publish -c Release -r linux-x64 --self-contained
+dotnet publish -c Release -r osx-x64 --self-contained
+
+# Publish as single file
+dotnet publish -c Release -r win-x64 --self-contained /p:PublishSingleFile=true
 ```
 
-#### Node.js:
+#### Create NuGet Package (for libraries):
 
 ```bash
-# Build production assets
-npm run build
+# Pack the project
+dotnet pack -c Release
 
-# Create Docker image
-docker build -t lotto-app:latest .
-```
-
-#### Java:
-
-```bash
-# Create JAR file
-mvn clean package
-
-# Create Docker image
-docker build -t lotto-app:latest .
+# Pack with specific version
+dotnet pack -c Release /p:Version=1.0.0
 ```
 
 ### Deployment
 
-```bash
-# Using Docker
-docker run -d -p 8080:8080 --env-file .env.production lotto-app:latest
+#### IIS (Windows):
 
-# Using Docker Compose
+1. Publish the application:
+   ```bash
+   dotnet publish -c Release -o ./publish
+   ```
+
+2. Install the .NET Hosting Bundle on the server
+3. Create a new IIS site pointing to the publish folder
+4. Configure the application pool to use "No Managed Code"
+
+#### Docker:
+
+Create a `Dockerfile`:
+
+```dockerfile
+FROM mcr.microsoft.com/dotnet/aspnet:6.0 AS base
+WORKDIR /app
+EXPOSE 80
+
+FROM mcr.microsoft.com/dotnet/sdk:6.0 AS build
+WORKDIR /src
+COPY ["LottoApp/LottoApp.csproj", "LottoApp/"]
+RUN dotnet restore "LottoApp/LottoApp.csproj"
+COPY . .
+WORKDIR "/src/LottoApp"
+RUN dotnet build "LottoApp.csproj" -c Release -o /app/build
+
+FROM build AS publish
+RUN dotnet publish "LottoApp.csproj" -c Release -o /app/publish
+
+FROM base AS final
+WORKDIR /app
+COPY --from=publish /app/publish .
+ENTRYPOINT ["dotnet", "LottoApp.dll"]
+```
+
+Build and run:
+
+```bash
+# Build Docker image
+docker build -t lotto-app:latest .
+
+# Run container
+docker run -d -p 8080:80 --name lotto-app lotto-app:latest
+
+# Or using Docker Compose
 docker-compose up -d
+```
+
+#### Azure App Service:
+
+```bash
+# Login to Azure
+az login
+
+# Create resource group (if needed)
+az group create --name LottoAppRG --location eastus
+
+# Create App Service plan
+az appservice plan create --name LottoAppPlan --resource-group LottoAppRG --sku B1
+
+# Create web app
+az webapp create --name lotto-app --resource-group LottoAppRG --plan LottoAppPlan
+
+# Deploy
+dotnet publish -c Release
+cd bin/Release/net6.0/publish
+zip -r deploy.zip .
+az webapp deployment source config-zip --resource-group LottoAppRG --name lotto-app --src deploy.zip
 ```
 
 ## Git Workflow
@@ -378,57 +474,102 @@ Configure the following protection rules for `main` and `develop` branches:
 
 ### Common Issues
 
+#### .NET SDK Not Found
+
+```bash
+# Verify .NET installation
+dotnet --version
+dotnet --list-sdks
+
+# If not installed, download from https://dotnet.microsoft.com/download
+```
+
+#### NuGet Package Restore Failures
+
+```bash
+# Clear NuGet cache
+dotnet nuget locals all --clear
+
+# Restore packages
+dotnet restore --force
+
+# If using Visual Studio, try:
+# Tools > NuGet Package Manager > Package Manager Console
+# Run: Update-Package -reinstall
+```
+
 #### Database Connection Errors
 
 ```bash
-# Check database status
-# PostgreSQL:
-pg_isready -h localhost
+# Verify connection string in appsettings.json
+# For SQLite, ensure the directory exists:
+mkdir -p data
 
-# MySQL:
-mysqladmin ping -h localhost
+# For SQL Server, test connection:
+sqlcmd -S (localdb)\mssqllocaldb -Q "SELECT @@VERSION"
 
-# Verify connection string in .env file
+# Check EF Core migrations status
+dotnet ef migrations list
+dotnet ef database update
 ```
 
-#### Missing Dependencies
+#### Build Errors
 
 ```bash
-# Python - reinstall dependencies
-pip install -r requirements.txt --force-reinstall
+# Clean the solution
+dotnet clean
 
-# Node.js - clear cache and reinstall
-npm cache clean --force
-rm -rf node_modules package-lock.json
-npm install
+# Rebuild
+dotnet build --no-incremental
 
-# Java - clean and rebuild
-mvn clean install -U
-```
-
-#### Import Data Issues
-
-```bash
-# Verify data format
-head -n 5 data/historical_draws.csv
-
-# Check for file encoding issues
-file -i data/historical_draws.csv
-
-# Validate CSV structure
-python -c "import csv; list(csv.reader(open('data/historical_draws.csv')))"
+# If using Visual Studio:
+# Build > Clean Solution
+# Build > Rebuild Solution
 ```
 
 #### Port Already in Use
 
 ```bash
-# Find process using the port (e.g., 8080)
-# Linux/macOS:
-lsof -i :8080
-# Windows:
-netstat -ano | findstr :8080
+# Windows - find process using port 5000
+netstat -ano | findstr :5000
 
-# Kill the process or use a different port in configuration
+# Kill the process (replace PID with actual process ID)
+taskkill /PID <PID> /F
+
+# Linux/macOS
+lsof -i :5000
+kill -9 <PID>
+
+# Or change the port in launchSettings.json or use:
+dotnet run --urls "http://localhost:5005"
+```
+
+#### Entity Framework Issues
+
+```bash
+# Reinstall EF Core tools
+dotnet tool uninstall --global dotnet-ef
+dotnet tool install --global dotnet-ef
+
+# Verify EF Core tools
+dotnet ef --version
+
+# Reset migrations (development only!)
+dotnet ef database drop
+dotnet ef migrations remove
+dotnet ef migrations add InitialCreate
+dotnet ef database update
+```
+
+#### SSL/HTTPS Certificate Issues (Development)
+
+```bash
+# Trust the development certificate
+dotnet dev-certs https --trust
+
+# Clean and regenerate
+dotnet dev-certs https --clean
+dotnet dev-certs https --trust
 ```
 
 ### Getting Help
@@ -436,8 +577,8 @@ netstat -ano | findstr :8080
 If you encounter issues not covered in this guide:
 
 1. Check the [GitHub Issues](https://github.com/Bejap/Lotto-Application/issues) for existing problems
-2. Review the application logs in `logs/` directory
-3. Enable debug mode by setting `DEBUG=true` in `.env`
+2. Review the application logs in the `logs/` directory or console output
+3. Enable debug logging by setting `"LogLevel": { "Default": "Debug" }` in `appsettings.Development.json`
 4. Create a new issue with detailed error messages and steps to reproduce
 
 ## Additional Resources
