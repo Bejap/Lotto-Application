@@ -10,6 +10,10 @@ class LottoApp {
         this.dataStatus = document.getElementById('dataStatus');
         this.frequencyTable = document.getElementById('frequencyTable');
         
+        // Configuration
+        this.numbersPerRow = 6;
+        this.maxAttempts = 1000;
+        
         this.init();
     }
     
@@ -80,9 +84,8 @@ class LottoApp {
             return;
         }
         
-        // Generate a row of lotto numbers (typically 6 numbers)
-        const numbersPerRow = 6;
-        const selectedNumbers = this.selectWeightedNumbers(numbersPerRow);
+        // Generate a row of lotto numbers
+        const selectedNumbers = this.selectWeightedNumbers(this.numbersPerRow);
         
         this.displayResults(selectedNumbers);
     }
@@ -101,9 +104,8 @@ class LottoApp {
         // Select unique random numbers from the weighted pool
         const selected = new Set();
         let attempts = 0;
-        const maxAttempts = 1000;
         
-        while (selected.size < count && attempts < maxAttempts) {
+        while (selected.size < count && attempts < this.maxAttempts) {
             const randomIndex = Math.floor(Math.random() * weightedPool.length);
             const number = weightedPool[randomIndex];
             selected.add(number);
