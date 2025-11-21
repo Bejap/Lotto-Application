@@ -1,35 +1,58 @@
 # Lotto Application - Setup Guide
 
-This guide provides comprehensive instructions for setting up the Lotto Application development environment.
+This guide provides comprehensive instructions for setting up and running the Lotto Application.
 
 ## Table of Contents
 
 - [Prerequisites](#prerequisites)
+- [Quick Start](#quick-start)
 - [Installation](#installation)
-- [Configuration](#configuration)
-- [Development Environment](#development-environment)
 - [Running the Application](#running-the-application)
-- [Testing](#testing)
-- [Building for Production](#building-for-production)
-- [Git Workflow](#git-workflow)
+- [Project Structure](#project-structure)
+- [Development](#development)
 - [Troubleshooting](#troubleshooting)
 
 ## Prerequisites
 
-Before setting up the Lotto Application, ensure you have the following installed on your system:
+Before setting up the Lotto Application, ensure you have ONE of the following installed on your system:
 
-- **Git** (version 2.x or higher)
-- **.NET SDK** (version 8.0 or higher recommended)
-  - Download from [https://dotnet.microsoft.com/download](https://dotnet.microsoft.com/download)
-  - Verify installation: `dotnet --version`
-- **Database** (optional, for data persistence):
-  - SQL Server Express (recommended for Windows)
-  - SQLite (lightweight, recommended for development)
-  - PostgreSQL 12+ (cross-platform option)
-- **Code Editor/IDE** (recommended):
-  - Visual Studio 2022 (Community, Professional, or Enterprise)
-  - Visual Studio Code with C# extension
-  - JetBrains Rider
+**Option 1: Node.js (Recommended)**
+- **Node.js** (version 14.x or higher)
+  - Download from [https://nodejs.org/](https://nodejs.org/)
+  - Verify installation: `node --version`
+  - npm is included with Node.js
+
+**Option 2: Python**
+- **Python** (version 3.x or 2.7)
+  - Download from [https://www.python.org/downloads/](https://www.python.org/downloads/)
+  - Verify installation: `python --version` or `python3 --version`
+
+**Optional:**
+- **Git** (version 2.x or higher) - for version control
+- **Code Editor** (recommended):
+  - Visual Studio Code
+  - Sublime Text
+  - Atom
+  - Any text editor of your choice
+
+## Quick Start
+
+The fastest way to get started:
+
+```bash
+# Clone the repository
+git clone https://github.com/Bejap/Lotto-Application.git
+cd Lotto-Application
+
+# Start the server (Node.js)
+npm start
+
+# Or using Python
+python3 -m http.server 8000
+```
+
+Then open your browser to `http://localhost:8000`
+
 
 ## Installation
 
@@ -40,565 +63,343 @@ git clone https://github.com/Bejap/Lotto-Application.git
 cd Lotto-Application
 ```
 
-### 2. Restore Dependencies
+### 2. No Dependencies Required
+
+This is a static web application - no additional dependencies need to be installed! The application runs entirely in the browser using vanilla HTML, CSS, and JavaScript.
+
+However, if you want to use the Node.js development server:
 
 ```bash
-# Restore NuGet packages
-dotnet restore
+# Optional: Initialize npm (if package.json doesn't exist)
+npm init -y
 
-# Or if using Visual Studio, it will restore automatically when you open the solution
-```
-
-### 3. Build the Solution
-
-```bash
-# Build in Debug mode
-dotnet build
-
-# Build in Release mode
-dotnet build --configuration Release
-```
-
-## Configuration
-
-### appsettings.json
-
-Create or modify `appsettings.json` for application-specific settings:
-
-```json
-{
-  "Logging": {
-    "LogLevel": {
-      "Default": "Information",
-      "Microsoft.AspNetCore": "Warning"
-    }
-  },
-  "AllowedHosts": "*",
-  "ConnectionStrings": {
-    "DefaultConnection": "Data Source=lotto.db",
-    "SqlServerConnection": "Server=(localdb)\\mssqllocaldb;Database=LottoApp;Trusted_Connection=True;MultipleActiveResultSets=true"
-  },
-  "LotterySettings": {
-    "Type": "standard",
-    "NumbersPerDraw": 6,
-    "NumberRangeMin": 1,
-    "NumberRangeMax": 49
-  },
-  "AnalysisSettings": {
-    "HistoricalDataLimit": 1000,
-    "HotNumberThreshold": 0.15,
-    "ColdNumberThreshold": 0.05
-  },
-  "GenerationSettings": {
-    "DefaultRows": 5,
-    "Algorithms": [
-      "FrequencyBased",
-      "PatternBased",
-      "RandomWeighted"
-    ]
-  },
-  "DataSource": {
-    "Url": "https://api.example.com/lottery-data",
-    "ApiKey": "your_api_key_here"
-  }
-}
-```
-
-### appsettings.Development.json
-
-For development-specific settings:
-
-```json
-{
-  "Logging": {
-    "LogLevel": {
-      "Default": "Debug",
-      "System": "Information",
-      "Microsoft": "Information"
-    }
-  },
-  "ConnectionStrings": {
-    "DefaultConnection": "Data Source=lotto_dev.db"
-  }
-}
-```
-
-### User Secrets (for sensitive data)
-
-For local development, use .NET User Secrets to store sensitive information:
-
-```bash
-# Initialize user secrets
-dotnet user-secrets init
-
-# Set API key
-dotnet user-secrets set "DataSource:ApiKey" "your_actual_api_key"
-
-# Set connection string
-dotnet user-secrets set "ConnectionStrings:SqlServerConnection" "your_connection_string"
-```
-
-## Development Environment
-
-### Setting Up the Database
-
-#### Entity Framework Core Migrations
-
-```bash
-# Install EF Core tools (if not already installed)
-dotnet tool install --global dotnet-ef
-
-# Add initial migration
-dotnet ef migrations add InitialCreate
-
-# Update database
-dotnet ef database update
-```
-
-#### SQLite (Development):
-
-SQLite database will be created automatically when running migrations. Connection string example:
-
-```json
-"ConnectionStrings": {
-  "DefaultConnection": "Data Source=lotto.db"
-}
-```
-
-#### SQL Server (Production):
-
-```bash
-# Ensure SQL Server is running
-# Update connection string in appsettings.json
-
-# Run migrations
-dotnet ef database update --connection "your_connection_string"
-```
-
-### Importing Historical Data
-
-```bash
-# Using a custom import command (if implemented)
-dotnet run -- import-data data/historical_draws.csv
-
-# Or using a separate console application
-dotnet run --project ImportTool -- data/historical_draws.csv
-```
-
-Example CSV format for historical draws:
-```csv
-DrawDate,Number1,Number2,Number3,Number4,Number5,Number6
-2024-01-01,5,12,23,34,41,49
-2024-01-08,3,15,27,33,38,45
+# The application has no external dependencies
+# but you can install dev tools if needed
 ```
 
 ## Running the Application
 
-### Development Mode
+There are multiple ways to run the Lotto Application:
 
-#### Console Application:
+### Method 1: Using Node.js (Recommended)
 
-```bash
-# Run the application
-dotnet run
-
-# Run with specific arguments
-dotnet run -- generate --rows 5
-
-# Run with watch (auto-reload on file changes)
-dotnet watch run
-```
-
-#### Web Application (ASP.NET Core):
+The project includes a simple Node.js server for development:
 
 ```bash
-# Run the web application
-dotnet run
+# Start the built-in server
+npm start
 
-# Or with watch for development
-dotnet watch run
-
-# Specify a different port
-dotnet run --urls "http://localhost:5000;https://localhost:5001"
+# Or run directly
+node server.js
 ```
 
-The application will be available at:
-- HTTP: `http://localhost:5000`
-- HTTPS: `https://localhost:5001`
+The application will be available at `http://localhost:8000`
 
-#### Using Visual Studio
+### Method 2: Using Python
 
-1. Open the solution file (`.sln`) in Visual Studio
-2. Press `F5` to run with debugging, or `Ctrl+F5` to run without debugging
+If you have Python installed:
+
+```bash
+# Using Python 3
+python3 -m http.server 8000
+
+# Using Python 2
+python -m SimpleHTTPServer 8000
+```
+
+Then open your browser to `http://localhost:8000`
+
+### Method 3: Using npx (No installation required)
+
+If you have npm/npx installed:
+
+```bash
+npx http-server -p 8000 -o
+```
+
+This will automatically open your browser to the application.
+
+### Method 4: Direct File Opening (Limited Functionality)
+
+You can open `index.html` directly in your browser, but this may cause CORS issues when loading the CSV file. Using a local server (methods 1-3) is recommended.
+
+## Project Structure
+
+```
+Lotto-Application/
+├── index.html              # Main HTML file - application entry point
+├── style.css               # Application styles and responsive design
+├── app.js                  # JavaScript logic for number generation
+├── server.js              # Simple Node.js development server
+├── package.json           # Node.js project configuration
+├── data/                  # Data folder
+│   └── lotto_frequency.csv # Frequency data file
+├── README.md             # Project overview and features
+├── SETUP.md              # This file - setup instructions
+└── .gitignore            # Git ignore patterns
+```
+
+### Key Files
+
+- **index.html**: The main entry point of the application
+- **app.js**: Contains the `LottoApp` class with all the application logic
+- **style.css**: All styling including responsive design for mobile
+- **data/lotto_frequency.csv**: Historical frequency data used for weighted number generation
+- **server.js**: Development server (optional, for convenience)
+
+## Development
 
 ### Using the Application
 
-#### Command Line Interface:
+1. **Start the Server**: Use any of the methods above to start a local server
+2. **Open in Browser**: Navigate to `http://localhost:8000`
+3. **Load Data**: Click "Load Frequency Data" to load the CSV file
+4. **Generate Numbers**: Click "Generate Lotto Numbers" to create a new set of numbers
+
+### Understanding the Code
+
+The application consists of a single `LottoApp` class that:
+
+1. **Loads CSV Data**: Reads the frequency data from `data/lotto_frequency.csv`
+2. **Parses Data**: Converts CSV into a usable format
+3. **Generates Numbers**: Uses weighted probability based on frequency
+4. **Displays Results**: Shows generated numbers with timestamps
+
+### Customizing the Application
+
+#### Modify Number Generation
+
+Edit `app.js` to change generation parameters:
+
+```javascript
+// In the LottoApp constructor
+this.numbersPerRow = 6;  // Change number of balls per draw
+this.maxAttempts = 1000; // Change max attempts for unique selection
+```
+
+#### Update Frequency Data
+
+Edit `data/lotto_frequency.csv` to use your own historical data:
+
+```csv
+number,frequency
+1,45
+2,38
+...
+```
+
+Format requirements:
+- Header row: `number,frequency`
+- Each row: `number` (integer) and `frequency` (integer)
+
+#### Customize Styling
+
+Edit `style.css` to change:
+- Color schemes (look for gradient definitions)
+- Layout and spacing
+- Responsive breakpoints
+- Animation effects
+
+## Configuration
+
+### Server Port
+
+To change the server port, set the `PORT` environment variable:
 
 ```bash
-# Generate lottery numbers
-dotnet run -- generate --rows 5
+# Unix/Mac/Linux
+PORT=3000 npm start
 
-# Analyze historical data
-dotnet run -- analyze --draws 100
+# Windows Command Prompt
+set PORT=3000 && npm start
 
-# Check number frequency
-dotnet run -- frequency --number 7
-
-# View hot and cold numbers
-dotnet run -- stats
+# Windows PowerShell
+$env:PORT=3000; npm start
 ```
 
-#### Web Interface (if implemented):
+Or edit `server.js` directly:
 
-Navigate to the web interface and use the UI to:
-- Generate lottery numbers
-- View historical analysis
-- Check number statistics
-- Track generated numbers
-
-## Testing
-
-### Running Tests
-
-```bash
-# Run all tests
-dotnet test
-
-# Run tests with detailed output
-dotnet test --verbosity detailed
-
-# Run tests with code coverage
-dotnet test --collect:"XPlat Code Coverage"
-
-# Run specific test project
-dotnet test tests/LottoApp.Tests/LottoApp.Tests.csproj
+```javascript
+const PORT = process.env.PORT || 8000; // Change 8000 to your preferred port
 ```
 
-### Test Structure
+### Application Settings
 
-```
-tests/
-├── LottoApp.Tests/              # Unit tests
-├── LottoApp.IntegrationTests/   # Integration tests
-└── LottoApp.TestData/           # Test data and fixtures
-```
+The application uses no external configuration files. All settings are in `app.js`:
 
-### Running Specific Tests
+```javascript
+// Number of lotto balls to generate
+this.numbersPerRow = 6;
 
-```bash
-# Run tests by filter
-dotnet test --filter "FullyQualifiedName~NumberGenerator"
-
-# Run tests by category
-dotnet test --filter "Category=Unit"
-
-# Run a specific test method
-dotnet test --filter "FullyQualifiedName=LottoApp.Tests.NumberGeneratorTests.GenerateNumbers_ReturnsCorrectCount"
+// Maximum attempts to find unique numbers
+this.maxAttempts = 1000;
 ```
 
-### Code Coverage Report
-
-```bash
-# Generate coverage report (requires ReportGenerator tool)
-dotnet test --collect:"XPlat Code Coverage"
-dotnet tool install -g dotnet-reportgenerator-globaltool
-reportgenerator -reports:"**/coverage.cobertura.xml" -targetdir:"coveragereport" -reporttypes:Html
-```
-
-### Watch Mode (for TDD)
-
-```bash
-# Run tests in watch mode
-dotnet watch test
-```
-
-## Building for Production
-
-### Creating a Production Build
-
-#### Publish the Application:
-
-```bash
-# Publish for the current platform
-dotnet publish -c Release
-
-# Publish for specific runtime (self-contained)
-dotnet publish -c Release -r win-x64 --self-contained
-dotnet publish -c Release -r linux-x64 --self-contained
-dotnet publish -c Release -r osx-x64 --self-contained
-
-# Publish as single file
-dotnet publish -c Release -r win-x64 --self-contained /p:PublishSingleFile=true
-```
-
-#### Create NuGet Package (for libraries):
-
-```bash
-# Pack the project
-dotnet pack -c Release
-
-# Pack with specific version
-dotnet pack -c Release /p:Version=1.0.0
-```
-
-### Deployment
-
-#### IIS (Windows):
-
-1. Publish the application:
-   ```bash
-   dotnet publish -c Release -o ./publish
-   ```
-
-2. Install the .NET Hosting Bundle on the server
-3. Create a new IIS site pointing to the publish folder
-4. Configure the application pool to use "No Managed Code"
-
-#### Docker:
-
-Create a `Dockerfile`:
-
-```dockerfile
-FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS base
-WORKDIR /app
-EXPOSE 80
-
-FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
-WORKDIR /src
-COPY ["LottoApp/LottoApp.csproj", "LottoApp/"]
-RUN dotnet restore "LottoApp/LottoApp.csproj"
-COPY . .
-WORKDIR "/src/LottoApp"
-RUN dotnet build "LottoApp.csproj" -c Release -o /app/build
-
-FROM build AS publish
-RUN dotnet publish "LottoApp.csproj" -c Release -o /app/publish
-
-FROM base AS final
-WORKDIR /app
-COPY --from=publish /app/publish .
-ENTRYPOINT ["dotnet", "LottoApp.dll"]
-```
-
-Build and run:
-
-```bash
-# Build Docker image
-docker build -t lotto-app:latest .
-
-# Run container
-docker run -d -p 8080:80 --name lotto-app lotto-app:latest
-
-# Or using Docker Compose
-docker-compose up -d
-```
-
-#### Azure App Service:
-
-```bash
-# Login to Azure
-az login
-
-# Create resource group (if needed)
-az group create --name LottoAppRG --location eastus
-
-# Create App Service plan
-az appservice plan create --name LottoAppPlan --resource-group LottoAppRG --sku B1
-
-# Create web app
-az webapp create --name lotto-app --resource-group LottoAppRG --plan LottoAppPlan
-
-# Deploy
-dotnet publish -c Release
-cd bin/Release/net8.0/publish
-zip -r deploy.zip .
-az webapp deployment source config-zip --resource-group LottoAppRG --name lotto-app --src deploy.zip
-```
-
-## Git Workflow
-
-### Branch Structure
-
-This repository uses the following branching strategy:
-
-- **main** - Production-ready code. All releases are tagged from this branch.
-- **develop** - Integration branch for features. All feature branches merge here first.
-- **feature/** - Feature branches created from `develop` for new features.
-- **bugfix/** - Bug fix branches for addressing issues.
-- **hotfix/** - Critical fixes that need immediate deployment to production.
-
-### Creating Feature Branches
-
-```bash
-# Create and switch to a new feature branch
-git checkout develop
-git pull origin develop
-git checkout -b feature/your-feature-name
-
-# Work on your feature...
-git add .
-git commit -m "Add feature description"
-
-# Push to remote
-git push -u origin feature/your-feature-name
-```
-
-### Merging Changes
-
-```bash
-# Update your feature branch with latest develop
-git checkout feature/your-feature-name
-git fetch origin
-git merge origin/develop
-
-# Create a pull request on GitHub
-# After PR approval, merge to develop
-git checkout develop
-git pull origin develop
-git merge feature/your-feature-name
-git push origin develop
-```
-
-### Branch Protection Rules (Recommended)
-
-Configure the following protection rules for `main` and `develop` branches:
-
-1. Require pull request reviews before merging
-2. Require status checks to pass before merging
-3. Require branches to be up to date before merging
-4. Include administrators in restrictions
-5. Require linear history (optional)
 
 ## Troubleshooting
 
 ### Common Issues
 
-#### .NET SDK Not Found
+#### Server Won't Start
 
+**Node.js server:**
 ```bash
-# Verify .NET installation
-dotnet --version
-dotnet --list-sdks
+# Check if Node.js is installed
+node --version
 
-# If not installed, download from https://dotnet.microsoft.com/download
+# If not installed, download from https://nodejs.org/
+
+# Check if port is already in use
+# On Unix/Linux/Mac:
+lsof -i :8000
+
+# On Windows:
+netstat -ano | findstr :8000
+
+# Use a different port
+PORT=3000 npm start
 ```
 
-#### NuGet Package Restore Failures
-
+**Python server:**
 ```bash
-# Clear NuGet cache
-dotnet nuget locals all --clear
+# Check Python installation
+python --version
+python3 --version
 
-# Restore packages
-dotnet restore --force
+# Try with python3 explicitly
+python3 -m http.server 8000
 
-# If using Visual Studio, try:
-# Tools > NuGet Package Manager > Package Manager Console
-# Run: Update-Package -reinstall
+# Or try Python 2 syntax
+python -m SimpleHTTPServer 8000
 ```
 
-#### Database Connection Errors
+#### CSV File Won't Load
 
+**CORS Issues:**
+- **Problem**: Opening `index.html` directly in browser causes CORS errors
+- **Solution**: Always use a local server (Node.js, Python, or npx)
+- **Error Message**: "CORS policy: Cross origin requests are only supported for protocol schemes..."
+
+**File Path Issues:**
 ```bash
-# Verify connection string in appsettings.json
-# For SQLite, ensure the directory exists:
-mkdir -p data
+# Verify the data file exists
+ls -la data/lotto_frequency.csv
 
-# For SQL Server, test connection:
-sqlcmd -S (localdb)\mssqllocaldb -Q "SELECT @@VERSION"
+# Check file permissions (Unix/Linux/Mac)
+chmod 644 data/lotto_frequency.csv
 
-# Check EF Core migrations status
-dotnet ef migrations list
-dotnet ef database update
+# Verify CSV format
+head data/lotto_frequency.csv
 ```
 
-#### Build Errors
+#### Numbers Not Generating
 
-```bash
-# Clean the solution
-dotnet clean
-
-# Rebuild
-dotnet build --no-incremental
-
-# If using Visual Studio:
-# Build > Clean Solution
-# Build > Rebuild Solution
-```
+1. **Check Console**: Open browser Developer Tools (F12) and check the Console tab for errors
+2. **Verify Data Loaded**: Make sure you clicked "Load Frequency Data" first
+3. **Check CSV Format**: Ensure the CSV has the correct format with `number,frequency` header
 
 #### Port Already in Use
 
 ```bash
-# Windows - find process using port 5000
-netstat -ano | findstr :5000
-
-# Kill the process (replace PID with actual process ID)
-taskkill /PID <PID> /F
-
-# Linux/macOS
-lsof -i :5000
+# Find process using the port
+# Unix/Linux/Mac:
+lsof -i :8000
 kill -9 <PID>
 
-# Or change the port in launchSettings.json or use:
-dotnet run --urls "http://localhost:5005"
+# Windows:
+netstat -ano | findstr :8000
+taskkill /PID <PID> /F
+
+# Or use a different port
+PORT=3001 npm start
 ```
 
-#### Entity Framework Issues
+#### Application Looks Broken
 
-```bash
-# Reinstall EF Core tools
-dotnet tool uninstall --global dotnet-ef
-dotnet tool install --global dotnet-ef
+1. **Clear Browser Cache**: Ctrl+Shift+R (or Cmd+Shift+R on Mac)
+2. **Check All Files Loaded**: Open Network tab in Developer Tools
+3. **Verify File Paths**: Ensure `style.css` and `app.js` are in the same directory as `index.html`
 
-# Verify EF Core tools
-dotnet ef --version
+### Browser Compatibility
 
-# Reset migrations (development only!)
-dotnet ef database drop
-dotnet ef migrations remove
-dotnet ef migrations add InitialCreate
-dotnet ef database update
-```
+The application works best on modern browsers:
+- ✅ Chrome/Chromium (version 90+)
+- ✅ Firefox (version 88+)
+- ✅ Safari (version 14+)
+- ✅ Edge (version 90+)
 
-#### SSL/HTTPS Certificate Issues (Development)
+**Note**: Internet Explorer is not supported (uses ES6+ JavaScript features)
 
-```bash
-# Trust the development certificate
-dotnet dev-certs https --trust
+### Development Tips
 
-# Clean and regenerate
-dotnet dev-certs https --clean
-dotnet dev-certs https --trust
-```
+1. **Use Browser DevTools**: Press F12 to open Developer Tools for debugging
+2. **Check Console Logs**: The app logs useful information to the console
+3. **Inspect Network Requests**: Use the Network tab to verify CSV file loading
+4. **Test Responsive Design**: Use DevTools device emulation to test mobile views
 
 ### Getting Help
 
 If you encounter issues not covered in this guide:
 
 1. Check the [GitHub Issues](https://github.com/Bejap/Lotto-Application/issues) for existing problems
-2. Review the application logs in the `logs/` directory or console output
-3. Enable debug logging by setting `"LogLevel": { "Default": "Debug" }` in `appsettings.Development.json`
-4. Create a new issue with detailed error messages and steps to reproduce
+2. Review the browser console for error messages
+3. Verify all files are in the correct locations
+4. Ensure you're using a local server (not opening files directly)
+5. Create a new issue with:
+   - Description of the problem
+   - Steps to reproduce
+   - Browser and OS information
+   - Console error messages (if any)
+   - Screenshots (if relevant)
 
-## Additional Resources
+## Additional Information
 
-- [README.md](README.md) - Project overview and features
-- [CONTRIBUTING.md](CONTRIBUTING.md) - Contribution guidelines (if available)
-- [API Documentation](docs/API.md) - API reference (if applicable)
-- [Architecture Documentation](docs/ARCHITECTURE.md) - System design (if available)
+### Performance Considerations
+
+- The application runs entirely in the browser - no backend required
+- CSV file is loaded once and cached in memory
+- Number generation is instant using weighted random selection
+- Suitable for datasets with thousands of numbers
+
+### Security Notes
+
+- This is a client-side application with no server-side data processing
+- CSV data is loaded from the local filesystem
+- No external API calls or data transmission
+- No user data is collected or stored
+
+### Future Enhancements
+
+Potential improvements for contributors:
+
+- Add ability to upload custom CSV files
+- Implement different lottery game types (Powerball, Mega Millions, etc.)
+- Add data visualization (charts showing frequency distribution)
+- Export generated numbers to CSV
+- Save favorite combinations to localStorage
+- Add statistics dashboard with hot/cold number analysis
+- Mobile app version (React Native or Progressive Web App)
+
+## Resources
+
+- [Node.js Documentation](https://nodejs.org/docs/)
+- [MDN Web Docs - JavaScript](https://developer.mozilla.org/en-US/docs/Web/JavaScript)
+- [MDN Web Docs - Fetch API](https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API)
+- [GitHub Repository](https://github.com/Bejap/Lotto-Application)
 
 ## Next Steps
 
 After completing the setup:
 
-1. Review the [README.md](README.md) to understand the application features
-2. Explore the codebase structure
-3. Run the test suite to ensure everything is working
-4. Try generating some lottery numbers using sample data
-5. Read the contributing guidelines before making changes
-6. Join the development team discussions
+1. ✅ Start the local server using your preferred method
+2. ✅ Open the application in your browser
+3. ✅ Click "Load Frequency Data" to load the CSV
+4. ✅ Click "Generate Lotto Numbers" to test the functionality
+5. 📖 Read the [README.md](README.md) to understand the algorithm
+6. 🛠️ Explore the code in `app.js` to see how it works
+7. 🎨 Customize `style.css` to change the appearance
+8. 📊 Modify `data/lotto_frequency.csv` with your own data
 
 ---
 
-For questions or support, please open an issue on GitHub or contact the maintainers.
+**For questions, support, or contributions, please visit the [GitHub repository](https://github.com/Bejap/Lotto-Application) or open an issue.**

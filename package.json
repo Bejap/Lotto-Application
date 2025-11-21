@@ -1,0 +1,21 @@
+{
+  "name": "lotto-application",
+  "version": "1.0.0",
+  "description": "A web-based lotto number generator that creates lottery numbers based on historical frequency data",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js",
+    "serve": "npx http-server -p 8000 -o"
+  },
+  "keywords": [
+    "lotto",
+    "lottery",
+    "number-generator",
+    "frequency-analysis"
+  ],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {},
+  "devDependencies": {}
+}
