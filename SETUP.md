@@ -19,7 +19,7 @@ This guide provides comprehensive instructions for setting up the Lotto Applicat
 Before setting up the Lotto Application, ensure you have the following installed on your system:
 
 - **Git** (version 2.x or higher)
-- **.NET SDK** (version 6.0 or higher)
+- **.NET SDK** (version 8.0 or higher recommended)
   - Download from [https://dotnet.microsoft.com/download](https://dotnet.microsoft.com/download)
   - Verify installation: `dotnet --version`
 - **Database** (optional, for data persistence):
@@ -360,11 +360,11 @@ dotnet pack -c Release /p:Version=1.0.0
 Create a `Dockerfile`:
 
 ```dockerfile
-FROM mcr.microsoft.com/dotnet/aspnet:6.0 AS base
+FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS base
 WORKDIR /app
 EXPOSE 80
 
-FROM mcr.microsoft.com/dotnet/sdk:6.0 AS build
+FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 WORKDIR /src
 COPY ["LottoApp/LottoApp.csproj", "LottoApp/"]
 RUN dotnet restore "LottoApp/LottoApp.csproj"
@@ -411,7 +411,7 @@ az webapp create --name lotto-app --resource-group LottoAppRG --plan LottoAppPla
 
 # Deploy
 dotnet publish -c Release
-cd bin/Release/net6.0/publish
+cd bin/Release/net8.0/publish
 zip -r deploy.zip .
 az webapp deployment source config-zip --resource-group LottoAppRG --name lotto-app --src deploy.zip
 ```
