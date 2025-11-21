@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lotto Number Generator</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🎰 Lotto Number Generator</h1>
+            <p>Generate lotto numbers based on historical frequency data</p>
+        </header>
+        
+        <main>
+            <div class="controls">
+                <button id="generateBtn" class="generate-btn">Generate Lotto Numbers</button>
+                <button id="loadDataBtn" class="load-data-btn">Load Frequency Data</button>
+            </div>
+            
+            <div class="info-section">
+                <p id="dataStatus" class="status">Click "Load Frequency Data" to begin</p>
+            </div>
+            
+            <div id="results" class="results"></div>
+            
+            <div class="frequency-section">
+                <h2>Number Frequency Data</h2>
+                <div id="frequencyTable" class="frequency-table"></div>
+            </div>
+        </main>
+        
+        <footer>
+            <p>Numbers are generated based on weighted probabilities from historical frequency data.</p>
+        </footer>
+    </div>
+    
+    <script src="app.js"></script>
+</body>
+</html>
