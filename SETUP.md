@@ -106,7 +106,8 @@ NUMBER_RANGE_MIN=1
 NUMBER_RANGE_MAX=49
 
 # Data Source (for historical lottery data)
-DATA_SOURCE_URL=https://api.lottery-data.example.com
+# Replace with actual data source URL
+DATA_SOURCE_URL=https://api.example.com/lottery-data
 DATA_SOURCE_API_KEY=your_api_key_here
 ```
 
@@ -167,7 +168,7 @@ mvn flyway:migrate
 ### Importing Historical Data
 
 ```bash
-# Download sample historical data
+# Download sample historical data (replace URL with actual data source)
 curl -o data/historical_draws.csv https://example.com/lottery-data.csv
 
 # Import the data
