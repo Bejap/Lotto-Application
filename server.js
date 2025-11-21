@@ -45,9 +45,14 @@ const server = http.createServer((req, res) => {
                 res.end(`Server Error: ${error.code}`, 'utf-8');
             }
         } else {
-            // Success
+            // Success - serve the file
             res.writeHead(200, { 'Content-Type': contentType });
-            res.end(content, 'utf-8');
+            // Only use encoding for text files
+            if (contentType.startsWith('text/') || contentType === 'application/json' || contentType === 'application/javascript') {
+                res.end(content, 'utf-8');
+            } else {
+                res.end(content);
+            }
         }
     });
 });

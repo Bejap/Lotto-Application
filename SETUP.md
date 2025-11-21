@@ -20,7 +20,7 @@ Before setting up the Lotto Application, ensure you have ONE of the following in
 - **Node.js** (version 14.x or higher)
   - Download from [https://nodejs.org/](https://nodejs.org/)
   - Verify installation: `node --version`
-  - npm is included with Node.js
+  - npm is typically included with standard Node.js installations
 
 **Option 2: Python**
 - **Python** (version 3.x or 2.7)

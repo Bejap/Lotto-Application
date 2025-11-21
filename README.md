@@ -38,27 +38,49 @@ The app uses a weighted random selection algorithm:
 - Ensures no duplicate numbers in a single row
 - Sorts the final numbers in ascending order
 
-## Usage
+## Quick Start
 
 ### Running the Application
 
-1. **Simple HTTP Server**:
-   ```bash
-   # Using Python 3
-   python3 -m http.server 8000
-   
-   # Using Python 2
-   python -m SimpleHTTPServer 8000
-   
-   # Using Node.js (if you have http-server installed)
-   npx http-server
-   ```
+**Easiest Method (Recommended):**
+```bash
+# Clone the repository
+git clone https://github.com/Bejap/Lotto-Application.git
+cd Lotto-Application
 
-2. Open your browser and navigate to `http://localhost:8000`
+# Run the application (auto-detects Node.js or Python)
+./run.sh        # On macOS/Linux
+run.bat         # On Windows
 
-3. Click "Load Frequency Data" to load the CSV file
+# Or use npm
+npm start
+```
 
-4. Click "Generate Lotto Numbers" to create a new row of numbers
+The application will automatically open at `http://localhost:8000`
+
+**Alternative Methods:**
+
+```bash
+# Using Node.js directly
+node server.js
+
+# Using Python 3
+python3 -m http.server 8000
+
+# Using Python 2
+python -m SimpleHTTPServer 8000
+
+# Using npx (no installation required)
+npx http-server -p 8000
+```
+
+### Using the Application
+
+1. Open your browser and navigate to `http://localhost:8000` (if not auto-opened)
+2. Click **"Load Frequency Data"** to load the CSV file
+3. Click **"Generate Lotto Numbers"** to create a new row of numbers
+4. View your generated numbers with timestamps
+5. Generate as many rows as you want - the last 5 are kept visible
 
 ### CSV Data Format
 
