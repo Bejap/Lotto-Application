@@ -3,9 +3,8 @@
 ## Quick Start Guide
 
 ### Prerequisites
-You need ONE of the following installed:
-- Node.js (recommended) - [Download](https://nodejs.org/)
-- Python 3 or Python 2 - [Download](https://www.python.org/)
+- [.NET 10.0 SDK](https://dotnet.microsoft.com/download) or later
+- A web browser (Chrome, Firefox, Safari, or Edge)
 
 ### Installation & Running
 
@@ -15,39 +14,22 @@ You need ONE of the following installed:
    cd Lotto-Application
    ```
 
-2. **Start the application** (choose one method)
-
-   **Method 1: Auto-detect (Easiest)**
+2. **Build and run the application**
    ```bash
-   # On macOS/Linux
-   ./run.sh
-   
-   # On Windows
-   run.bat
-   ```
+   # Build the application
+   dotnet build
 
-   **Method 2: Using npm**
-   ```bash
-   npm start
-   ```
-
-   **Method 3: Using Node.js**
-   ```bash
-   node server.js
-   ```
-
-   **Method 4: Using Python**
-   ```bash
-   python3 -m http.server 8000
+   # Run the application
+   dotnet run
    ```
 
 3. **Open your browser**
-   - Navigate to `http://localhost:8000`
+   - Navigate to `http://localhost:5000` (or the URL shown in the console)
    - The page will load automatically
 
 4. **Use the application**
    - Click **"Load Frequency Data"** button (green)
-   - Wait for "Successfully loaded 49 numbers" message
+   - Wait for "Successfully loaded 36 numbers" message
    - Click **"Generate Lotto Numbers"** button (purple)
    - View your generated numbers!
    - Generate as many times as you want
@@ -58,7 +40,7 @@ The application displays:
 - **Generated Numbers**: Your lotto numbers in circular badges, sorted in ascending order
 - **Timestamp**: When each set was generated
 - **History**: Last 5 generated sets are kept visible
-- **Frequency Table**: All 49 numbers with their historical frequencies
+- **Frequency Table**: All numbers with their historical frequencies
 - **Success Messages**: Clear feedback on data loading and generation
 
 ## Features
@@ -68,21 +50,36 @@ The application displays:
 ✅ **Responsive Design**: Works on desktop, tablet, and mobile  
 ✅ **Clean UI**: Modern gradient design with smooth animations  
 ✅ **Real-time Updates**: Instant number generation with no page reload  
+✅ **RESTful API**: Backend powered by ASP.NET Core Web API  
+
+## Running Tests
+
+```bash
+# Navigate to the test project
+cd LottoApplication.Tests
+
+# Run all tests
+dotnet test
+```
 
 ## Troubleshooting
 
 **Port already in use?**
 ```bash
-# Use a different port
-PORT=3000 npm start
-# or
-PORT=3000 node server.js
+# Configure a different port in Properties/launchSettings.json
+# Or use the command line:
+dotnet run --urls "http://localhost:3000"
 ```
 
-**CSV won't load?**
-- Make sure you're using a local server (not opening index.html directly)
-- Check that `data/lotto_frequency.csv` exists
-- Look for errors in browser console (F12)
+**Application won't start?**
+- Ensure .NET SDK is installed: `dotnet --version`
+- Rebuild the application: `dotnet build`
+- Check for errors in the console output
+
+**Data won't load?**
+- Ensure `data/lotto_frequency.csv` exists
+- Check the browser console (F12) for errors
+- Verify the API is running at `/api/lotto/load-data`
 
 **Need help?**
 - Check [SETUP.md](SETUP.md) for detailed instructions
@@ -92,8 +89,9 @@ PORT=3000 node server.js
 ## Next Steps
 
 - Customize the frequency data in `data/lotto_frequency.csv`
-- Modify number of balls in `app.js` (change `numbersPerRow`)
-- Update colors and styling in `style.css`
+- Modify number generation parameters in `Services/LottoService.cs`
+- Update colors and styling in `wwwroot/style.css`
 - Read the code to understand the weighted algorithm
+- Explore the API endpoints at `/api/lotto/*`
 
 Enjoy your lotto number generation! 🎰
