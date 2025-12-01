@@ -11,9 +11,9 @@ namespace LottoApplication.Controllers;
 [Route("api/[controller]")]
 public class LottoController : ControllerBase
 {
-    private readonly LottoService _lottoService;
+    private readonly ILottoService _lottoService;
 
-    public LottoController(LottoService lottoService)
+    public LottoController(ILottoService lottoService)
     {
         _lottoService = lottoService;
     }

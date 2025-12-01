@@ -10,7 +10,7 @@ public class Program
 
         // Add services to the container.
         builder.Services.AddControllers();
-        builder.Services.AddSingleton<LottoService>();
+        builder.Services.AddSingleton<ILottoService, LottoService>();
 
         // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
         builder.Services.AddOpenApi();

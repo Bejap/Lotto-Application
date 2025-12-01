@@ -5,7 +5,7 @@ namespace LottoApplication.Services;
 /// <summary>
 /// Service for loading frequency data and generating weighted lotto numbers.
 /// </summary>
-public class LottoService
+public class LottoService : ILottoService
 {
     private readonly IWebHostEnvironment _environment;
     private List<FrequencyData> _frequencyData = [];
@@ -30,7 +30,7 @@ public class LottoService
     /// <summary>
     /// Loads frequency data from the CSV file.
     /// </summary>
-    public async Task<List<FrequencyData>> LoadFrequencyDataAsync()
+    public async Task<IReadOnlyList<FrequencyData>> LoadFrequencyDataAsync()
     {
         var csvPath = Path.Combine(_environment.ContentRootPath, "data", "lotto_frequency.csv");
         
@@ -58,7 +58,7 @@ public class LottoService
             .Cast<FrequencyData>()
             .ToList();
 
-        return _frequencyData;
+        return _frequencyData.AsReadOnly();
     }
 
     /// <summary>
