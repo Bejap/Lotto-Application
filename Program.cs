@@ -33,7 +33,6 @@ public class Program
         Console.WriteLine("========================================");
         Console.WriteLine("🎰 Lotto Application Server Running");
         Console.WriteLine("========================================");
-        Console.WriteLine("Server running at http://localhost:5000/");
         Console.WriteLine("Press Ctrl+C to stop the server");
         Console.WriteLine("========================================");
 
