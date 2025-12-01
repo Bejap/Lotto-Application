@@ -1,5 +1,5 @@
 // Lotto Application
-// Generates lotto numbers based on frequency data from CSV file
+// Generates lotto numbers based on frequency data from API
 
 class LottoApp {
     constructor() {
@@ -9,10 +9,6 @@ class LottoApp {
         this.resultsDiv = document.getElementById('results');
         this.dataStatus = document.getElementById('dataStatus');
         this.frequencyTable = document.getElementById('frequencyTable');
-        
-        // Configuration
-        this.numbersPerRow = 6;
-        this.maxAttempts = 1000;
         
         this.init();
     }
@@ -27,15 +23,23 @@ class LottoApp {
         try {
             this.updateStatus('Loading frequency data...', 'info');
             
-            const response = await fetch('data/lotto_frequency.csv');
+            const response = await fetch('/api/lotto/load-data', {
+                method: 'POST'
+            });
+            
             if (!response.ok) {
-                throw new Error('Failed to load CSV file');
+                const error = await response.json();
+                throw new Error(error.message || 'Failed to load frequency data');
             }
             
-            const csvText = await response.text();
-            this.parseCSV(csvText);
+            const data = await response.json();
             
-            this.updateStatus(`Successfully loaded ${this.frequencyData.length} numbers`, 'success');
+            if (!data.success) {
+                throw new Error(data.message);
+            }
+            
+            this.frequencyData = data.frequencyData;
+            this.updateStatus(data.message, 'success');
             this.generateBtn.disabled = false;
             this.displayFrequencyTable();
             
@@ -45,29 +49,11 @@ class LottoApp {
         }
     }
     
-    parseCSV(csvText) {
-        const lines = csvText.trim().split('\n');
-        // Skip header row
-        const dataLines = lines.slice(1);
-        
-        this.frequencyData = dataLines.map(line => {
-            const [number, frequency] = line.split(',').map(item => item.trim());
-            return {
-                number: parseInt(number),
-                frequency: parseInt(frequency)
-            };
-        }).filter(item => !isNaN(item.number) && !isNaN(item.frequency));
-        
-        console.log('Loaded frequency data:', this.frequencyData);
-    }
-    
     displayFrequencyTable() {
         this.frequencyTable.innerHTML = '';
         
-        // Sort by frequency (descending) for better visualization
-        const sortedData = [...this.frequencyData].sort((a, b) => b.frequency - a.frequency);
-        
-        sortedData.forEach(item => {
+        // Data is already sorted by frequency from the API
+        this.frequencyData.forEach(item => {
             const div = document.createElement('div');
             div.className = 'frequency-item';
             div.innerHTML = `
@@ -78,49 +64,36 @@ class LottoApp {
         });
     }
     
-    generateNumbers() {
+    async generateNumbers() {
         if (this.frequencyData.length === 0) {
             this.updateStatus('Please load frequency data first', 'error');
             return;
         }
         
-        // Generate a row of lotto numbers
-        const selectedNumbers = this.selectWeightedNumbers(this.numbersPerRow);
-        
-        this.displayResults(selectedNumbers);
-    }
-    
-    selectWeightedNumbers(count) {
-        // Create a weighted pool of numbers based on frequency
-        const weightedPool = [];
-        
-        this.frequencyData.forEach(item => {
-            // Add the number to the pool 'frequency' times
-            for (let i = 0; i < item.frequency; i++) {
-                weightedPool.push(item.number);
+        try {
+            const response = await fetch('/api/lotto/generate', {
+                method: 'POST'
+            });
+            
+            if (!response.ok) {
+                const error = await response.json();
+                throw new Error(error.message || 'Failed to generate numbers');
             }
-        });
-        
-        // Select unique random numbers from the weighted pool
-        const selected = new Set();
-        let attempts = 0;
-        
-        while (selected.size < count && attempts < this.maxAttempts) {
-            const randomIndex = Math.floor(Math.random() * weightedPool.length);
-            const number = weightedPool[randomIndex];
-            selected.add(number);
-            attempts++;
+            
+            const result = await response.json();
+            this.displayResults(result.numbers, result.generatedAt);
+            
+        } catch (error) {
+            this.updateStatus(`Error: ${error.message}`, 'error');
+            console.error('Error generating numbers:', error);
         }
-        
-        // Convert to array and sort
-        return Array.from(selected).sort((a, b) => a - b);
     }
     
-    displayResults(numbers) {
+    displayResults(numbers, generatedAt) {
         const rowDiv = document.createElement('div');
         rowDiv.className = 'lotto-row';
         
-        const timestamp = new Date().toLocaleTimeString();
+        const timestamp = new Date(generatedAt).toLocaleTimeString();
         rowDiv.innerHTML = `
             <h3>Generated at ${timestamp}</h3>
             <div class="numbers">
