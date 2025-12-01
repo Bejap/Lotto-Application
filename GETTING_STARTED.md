@@ -3,7 +3,7 @@
 ## Quick Start Guide
 
 ### Prerequisites
-- [.NET 10.0 SDK](https://dotnet.microsoft.com/download) or later
+- [.NET 8.0 SDK](https://dotnet.microsoft.com/download) or later
 - A web browser (Chrome, Firefox, Safari, or Edge)
 
 ### Installation & Running

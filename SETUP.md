@@ -17,7 +17,7 @@ This guide provides comprehensive instructions for setting up and running the Lo
 Before setting up the Lotto Application, ensure you have the following installed:
 
 **.NET SDK (Required)**
-- **.NET 10.0 SDK** or later
+- **.NET 8.0 SDK** or later
   - Download from [https://dotnet.microsoft.com/download](https://dotnet.microsoft.com/download)
   - Verify installation: `dotnet --version`
 

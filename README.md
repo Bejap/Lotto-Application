@@ -14,7 +14,7 @@ A .NET C# web application that generates lottery numbers based on historical fre
 
 ## Technology Stack
 
-- .NET 10.0
+- .NET 8.0
 - ASP.NET Core Web API
 - xUnit for testing
 - HTML/CSS/JavaScript frontend
@@ -62,7 +62,7 @@ The app uses a weighted random selection algorithm:
 
 ### Prerequisites
 
-- [.NET 10.0 SDK](https://dotnet.microsoft.com/download) or later
+- [.NET 8.0 SDK](https://dotnet.microsoft.com/download) or later
 
 ### Running the Application
 
